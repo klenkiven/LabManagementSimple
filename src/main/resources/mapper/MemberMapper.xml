@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.tyut.selaba2.management.mapper.MemberMapper">
+
+    <resultMap id="MemberResult" type="Member">
+        <id     property="memberId"         column="member_id" />
+        <result property="avatar"           column="avatar_pic_md5" />
+        <result property="labGroup"         column="lab_group" />
+        <result property="password"         column="member_password" />
+        <result property="nickname"         column="member_nickname" />
+        <result property="name"             column="member_name" />
+        <result property="sex"              column="member_sex" />
+        <result property="fingerId"         column="member_finger" />
+        <result property="email"            column="member_email" />
+        <result property="phoneNum"         column="member_phone_number" />
+        <result property="address"          column="member_address" />
+        <result property="birthday"         column="member_birthday" />
+        <result property="isWorking"        column="is_working" />
+        <result property="loginIpAddr"      column="member_login_ipaddr" />
+        <result property="lastLoginDate"    column="member_last_login_date" />
+        <result property="email2"           column="member_email_2" />
+        <result property="phone2"           column="member_phone_2" />
+        <result property="address2"         column="member_address_2" />
+    </resultMap>
+
+    <!-- 查询模块 查询用户列表、查询特定用户 -->
+    <!-- TODO 这里可以尝试使用分页处理，然后可以检索信息，暂时这样，以后再说 -->
+    <sql id="selectMemberVo">
+        select * from members
+    </sql>
+    <select id="selectAllMembersList" resultMap="MemberResult" >
+        <include refid="selectMemberVo"/>
+    </select>
+
+    <select id="selectWorkingMemberList" resultMap="MemberResult" >
+        <include refid="selectMemberVo"/>
+        where is_working = 1
+    </select>
+
+    <select id="selectGroupMembersList" parameterType="java.lang.String" resultMap="MemberResult">
+        <include refid="selectMemberVo"/>
+        where lab_group = #{groupName}
+    </select>
+
+    <select id="selectDepartmentMembersList" parameterType="java.lang.String" resultMap="MemberResult">
+        <include refid="selectMemberVo"/>
+        left outer join lab_groups
+        on member.lab_group = lab_groups.group_name
+        where lab_groups.department_name = #{departmentName}
+    </select>
+
+    <select id="selectMemberByID" parameterType="java.lang.Long" resultMap="MemberResult">
+        <include refid="selectMemberVo"/>
+        where member_id = #{memberId}
+    </select>
+
+    <select id="selectMemberByEmail" parameterType="java.lang.String" resultMap="MemberResult">
+        <include refid="selectMemberVo"/>
+        where member_email = #{memberEmail}
+    </select>
+
+    <select id="selectMemberByPhoneNum" parameterType="java.lang.Long" resultMap="MemberResult">
+        <include refid="selectMemberVo"/>
+        where member_phone_number = #{memberPhoneNum}
+    </select>
+
+    <!-- 插入模块 -->
+    <!-- TODO 生成权限以后，一定要同时给用户权限，写 ** 服务层 ** 的时候要注意 -->
+    <!-- TODO 插入同步问题 -->
+    <insert id="insertMember" parameterType="Member" >
+        insert into members (
+        member_id,
+        <if test="avatar != null and avatar != ''">avatar_pic_md5, </if>
+        <if test="labGroup != null and labGroup != null">lab_group,</if>
+        <if test="password != null and avatar != ''">member_password, </if>
+        <if test="nickname != null and nickname != ''">member_nickname, </if>
+        <if test="name != null and name != ''">member_name, </if>
+        <if test="sex != null and sex != 0">member_sex, </if>
+        <!-- 这里使用默认值，不再放入其中 -->
+        <!-- <if test="finger != null and finger != 0">member_finger, </if>-->
+        <if test="email != null and email != ''">member_email, </if>
+        <if test="phoneNum != null and phoneNum != 0">member_phone_number, </if>
+        <if test="address != null and address != ''">member_address, </if>
+        member_birthday
+        ) value (
+        #{memberId},
+        <if test="avatar != null and avatar != ''">#{avatar},</if>
+        <if test="labGroup != null and labGroup != null">#{labGroup},</if>
+        <if test="password != null and avatar != ''">#{password},</if>
+        <if test="nickname != null and nickname != ''">#{nickname},</if>
+        <if test="name != null and name != ''">#{name},</if>
+        <if test="sex != null and sex != 0">#{sex},</if>
+        <!-- 这里使用默认值，不再放入其中 -->
+        <!--<if test="finger != null and finger != 0">member_finger, </if>-->
+        <if test="email != null and email != ''">#{email},</if>
+        <if test="phoneNum != null and phoneNum != 0">#{phoneNum},</if>
+        <if test="address != null and address != ''">#{address}, </if>
+        #{birthday}
+        )
+    </insert>
+
+    <!-- 修改用户数据 不包含权限的修改，权限修改写到服务中 -->
+    <!-- TODO 修改同步问题 -->
+    <update id="updateMember" parameterType="Member" >
+        update members
+        <set>
+            <if test="avatar != null and avatar != ''">avatar_pic_md5 = #{avatar}, </if>
+            <if test="labGroup != null and labGroup != null">lab_group = #{labGroup}, </if>
+            <if test="password != null and avatar != ''">member_password = #{password}, </if>
+            <if test="nickname != null and nickname != ''">member_nickname = #{nickname}, </if>
+            <if test="name != null and name != ''">member_name = #{name}, </if>
+            <if test="sex != null and sex != 0">member_sex = #{sex}, </if>
+            <if test="fingerId != null and fingerId != 0">member_finger = #{fingerId}, </if>
+            <if test="email != null and email != ''">member_email = #{email}, </if>
+            <if test="phoneNum != null and phoneNum != 0">member_phone_number = #{phoneNum}, </if>
+            <if test="address != null and address != ''">member_address = #{address}, </if>
+            <if test="birthday != null and birthday != 0">member_birthday = #{birthday}, </if>
+            <if test="isWorking != null and isWorking != ''">is_working = #{isWorking}, </if>
+            <if test="loginIpAddr != null and loginIpAddr != ''">member_login_ipaddr = #{loginIpAddr}, </if>
+            <if test="lastLoginDate != null and lastLoginDate != 0">member_last_login_date = #{lastLoginDate}, </if>
+            <if test="email2 != null and email2 != ''">member_email_2 = #{email2}, </if>
+            <if test="phone2 != null and phone2 != ''">member_phone_2 = #{phone2}, </if>
+            <if test="address2 != null and address2 != ''">member_address_2 = #{address2} </if>
+        </set>
+        where member_id = #{memberId}
+    </update>
+
+    <!-- 删除用户记录 -->
+    <!-- TODO 删除的同步问题 -->
+    <delete id="deleteMemberByID" parameterType="Long">
+        delete from members where member_id = #{userId}
+    </delete>
+
+    <!-- 根据用户ID列表删除用户 -->
+    <delete id="deleteMemberByIDs" parameterType="Long">
+        delete members where member_id in
+        <foreach collection="array" item="memberId" open="(" separator="," close=")" >
+            #{memberId}
+        </foreach>
+    </delete>
+</mapper>

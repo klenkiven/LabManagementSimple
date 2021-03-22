@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.tyut.selaba2.management.mapper.UserPermissionMapper">
+
+    <resultMap id="permissionMap" type="UserPermission">
+        <id     property="userId"                   column="user_id"/>
+        <result property="ROOT_PERMISSION"          column="root_permission"/>
+        <result property="DEPT_PERMISSION"          column="dept_absolute_permission"/>
+        <result property="GROUP_PERMISSION"         column="group_absolute_permission"/>
+        <result property="SELF_PERMISSION"          column="self_absolute_permission"/>
+        <result property="GUEST_PERMISSION"         column="guest_permission"/>
+        <result property="NEWS_EDIT_PERMISSION"     column="news_edit_permission"/>
+    </resultMap>
+
+    <!-- 通过ID检索用户权限 -->
+    <select id="selectUserPermissionByID" resultMap="permissionMap" parameterType="java.lang.Long" >
+        select * from user_prermission where user_id = #{userId}
+    </select>
+
+    <!-- 通过权限检索用户ID -->
+    <select id="selectUserIDByPermission" resultType="java.lang.Long" parameterType="java.lang.String">
+        select user_id from user_prermission where ${permissionColunm} = 1
+    </select>
+
+    <!-- 检索所有用户的权限信息 -->
+    <select id="selectAllUserPermission" resultMap="permissionMap" >
+        select * from user_prermission
+    </select>
+
+    <!-- 修改用户权限 -->
+    <update id="updateUserPermission" parameterType="UserPermission" >
+        update user_prermission
+        set
+            root_permission             = #{ROOT_PERMISSION},
+            dept_absolute_permission    = #{DEPT_PERMISSION},
+            group_absolute_permission   = #{GROUP_PERMISSION},
+            self_absolute_permission    = #{SELF_PERMISSION},
+            guest_permission            = #{GUEST_PERMISSION},
+            news_edit_permission        = #{NEWS_EDIT_PERMISSION}
+        where user_id = #{userId}
+    </update>
+
+    <!-- 清除用户权限 -->
+    <update id="clearUserPermissionByID" parameterType="java.lang.Long" >
+        update user_prermission
+        set
+            root_permission             = 0,
+            dept_absolute_permission    = 0,
+            group_absolute_permission   = 0,
+            self_absolute_permission    = 0,
+            guest_permission            = 0,
+            news_edit_permission        = 0
+        where user_id = #{userId}
+    </update>
+
+    <!-- 用户删除 -->
+    <delete id="deleteUserPermissionByID" parameterType="java.lang.Long">
+        delete from user_prermission where user_id = #{userId}
+    </delete>
+
+    <!-- 根据用户列表删除指定ID的用户 -->
+    <delete id="deleteUserPermissionByIDs" parameterType="java.lang.Long">
+        delete from user_prermission where user_id in
+        <foreach collection="array" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <!-- 创建用户权限 -->
+    <insert id="insertDefaultUserPermissionByID" parameterType="java.lang.Long">
+        insert into user_prermission(user_id)
+            value (#{userId})
+    </insert>
+</mapper>

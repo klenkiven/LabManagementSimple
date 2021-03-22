@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource="jdbc.properties"/>
+
+    <!-- 别名 -->
+    <typeAliases>
+        <typeAlias type="edu.tyut.selaba2.management.domain.Member"             alias="Member" />
+        <typeAlias type="edu.tyut.selaba2.management.domain.Group"              alias="Group" />
+        <typeAlias type="edu.tyut.selaba2.management.domain.Department"         alias="Department" />
+        <typeAlias type="edu.tyut.selaba2.management.domain.Guest"              alias="Guest" />
+        <typeAlias type="edu.tyut.selaba2.management.domain.UserPermission"     alias="UserPermission" />
+        <typeAlias type="edu.tyut.selaba2.management.domain.SpaceUsageRecord"   alias="SpaceUsageRecord" />
+    </typeAliases>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driverClass}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${user}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="mapper/MemberMapper.xml"/>
+        <mapper resource="mapper/UserPermissionMapper.xml"/>
+        <mapper resource="mapper/GroupMapper.xml"/>
+        <mapper resource="mapper/DepartmentMapper.xml"/>
+        <mapper resource="mapper/GuestMapper.xml" />
+        <mapper resource="mapper/SpaceUsageRecordMapper.xml" />
+    </mappers>
+
+</configuration>
